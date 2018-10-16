@@ -3,7 +3,6 @@
 
 #include "stdio.h"
 
-//#define SHOW_PRINTS
 
 #define TRILATERATION (1)
 

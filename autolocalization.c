@@ -91,7 +91,7 @@ void updateTagStatistics(double x, double y, double z) //update the history arra
 	self_report.x_arr[self_report.count];
 	self_report.x_arr[self_report.count];
 
-	//faccio la media delle history
+	//history mean value
     for(j=0; j<HIS_LENGTH; j++)
     {
        self_report.av_x += self_report.x_arr[j];
@@ -103,26 +103,24 @@ void updateTagStatistics(double x, double y, double z) //update the history arra
     self_report.av_y /= HIS_LENGTH;
     self_report.av_z /= HIS_LENGTH;
 
-	// scostamento quadro dei campioni dalla media
+	// mean square distance
     for(j=0; j<HIS_LENGTH; j++)
     	DistanceXY[j] = sqrt((self_report.x_arr[j] - self_report.av_x)*(self_report.x_arr[j] - self_report.av_x) + (self_report.y_arr[j] - self_report.av_y)*(self_report.y_arr[j] - self_report.av_y));
 
 	// diviso num campioni
     for (j=0; j<HIS_LENGTH; j++)
         avDistanceXY += DistanceXY[j]/HIS_LENGTH;
-	//dev_standard
+	//standard deviation
     for(j=0; j<HIS_LENGTH; j++)
     	sum_std += (DistanceXY[j]-avDistanceXY)*(DistanceXY[j]-avDistanceXY);
 
     stdevXY = sqrt(sum_std/HIS_LENGTH);
 
-	// due vettori 2d nulli temporanei
     vec2d sum_tempXY = {0, 0}; // check
     vec2d CentrerXY = {0, 0};
 
     int counterXY = 0;
 	
-	//se lo scostamento < dev standard ^2 allora somma l'elemento al vettore temporaneo
     for(j=0; j<HIS_LENGTH; j++)
         if (DistanceXY[j] < stdevXY*2)
         {
@@ -131,15 +129,14 @@ void updateTagStatistics(double x, double y, double z) //update the history arra
             counterXY++;
         }
 
-	// dividi per il num di campioni sommati per trovare il centro
     CentrerXY.x  = sum_tempXY.x/counterXY;
     CentrerXY.y  = sum_tempXY.y/counterXY;
 
-	// distanza dei campioni dal centro
+	// distance of the samples from the center
     for(j=0; j<HIS_LENGTH; j++)
         DstCentreXY[j] = sqrt((self_report.x_arr[j] - CentrerXY.x)*(self_report.x_arr[j] - CentrerXY.x) + (self_report.y_arr[j] - CentrerXY.y)*(self_report.y_arr[j] - CentrerXY.y));
 
-	//riordina le distanze dal centro
+	//reorder
     r95Sort(DstCentreXY,0,HIS_LENGTH-1); 
     int h = (int)0.95*HIS_LENGTH;
 
@@ -181,7 +178,7 @@ void updateTagStatistics(double x, double y, double z) //update the history arra
     
 }
 
-//sceglie il tipo di filtro da usare
+//select filter type
 void setLocationFilter(int filter)
 {
 	/*
@@ -194,7 +191,7 @@ void setLocationFilter(int filter)
     _usingFilter = filter ;
 }
 
-// algoritmo di ordinamento
+// sorting alg
 void r95Sort (double s[], int l, int r)
 {
     int i,j;
@@ -501,7 +498,7 @@ int calculateTagLocation(vec3d *report, int *ranges) // funziona solamente con 3
     anchorArray[2].x = _ancArray[2].x;
     anchorArray[2].y = _ancArray[2].y;
     anchorArray[2].z = _ancArray[2].z;
-    // copia della prima per far funzionare trilateration()
+    // if only 3 anchors, use anchor 0 as fourth anchor
     anchorArray[3].x = _ancArray[0].x;
     anchorArray[3].y = _ancArray[0].y;
     anchorArray[3].z = _ancArray[0].z;
@@ -521,7 +518,7 @@ int calculateTagLocation(vec3d *report, int *ranges) // funziona solamente con 3
     return result;
 }
 
-void initialiseTag() // potrebbe ritornare l'oggetto self_report per non instaziare la variabile globale
+void initialiseTag() 
 {
 
 	int i,j;
