@@ -1595,6 +1595,27 @@ int anch_app_run(instance_data_t *inst)
 
             }
             break ; // end case TA_RX_WAIT_DATA
+            case TA_TXASYNC_SEND
+			{
+            	//the final has the same range number as the poll (part of the same ranging exchange)
+                            inst->msg_f.messageData[POLL_RNUM] = inst->rangeNumA[tag_index];
+                            //the mask is sent so the anchors know whether the response RX time is valid
+            				inst->msg_f.messageData[VRESP] =  0;
+                        	inst->msg_f.messageData[FCODE] = RTLS_DEMO_MSG_ANCH_ASYNC; //message function code (specifies if message is a poll, response or other...)
+                            inst->psduLength = (ANCH_FINAL_MSG_LEN + FRAME_CRTL_AND_ADDRESS_S + FRAME_CRC);
+                            inst->msg_f.seqNum = inst->frameSN++;
+                            inst->msg_f.messageData[PTXT] = (uint8)anctoancranges[0];
+							inst->msg_f.messageData[RRXT0] = (uint8)anctoancranges[1];
+							inst->msg_f.messageData[RRXT1] = (uint8)anctoancranges[2];
+							inst->msg_f.messageData[RRXT2] = (uint8)anctoancranges[3];
+            				dwt_writetxdata(inst->psduLength, (uint8 *)  &inst->msg_f, 0) ;	// write the frame data
+
+            				inst->wait4ack = 0; //clear the flag not using wait for response as this message ends the ranging exchange
+                            inst->testAppState = TA_TX_WAIT_CONF;                                               // wait confirmation
+                            inst->previousState = TA_TXASYNC_SEND;
+
+            				instDone = INST_DONE_WAIT_FOR_NEXT_EVENT; //will use RX FWTO to time out (set above)
+            }
             default:
             break;
     } // end switch on testAppState
