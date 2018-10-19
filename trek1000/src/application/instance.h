@@ -647,6 +647,8 @@ int instance_starttxtest(int framePeriod);
 
 instance_data_t* instance_get_local_structure_ptr(unsigned int x);
 
+int anctoancranges[4] = {0,0,0,0};
+
 #ifdef __cplusplus
 }
 #endif

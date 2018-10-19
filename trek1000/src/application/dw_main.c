@@ -689,6 +689,8 @@ int dw_main(void)
 														valid, instance_get_idist_mm(0), instance_get_idist_mm(1),
 														instance_get_idist_mm(2), instance_get_idist_mm(3),
 														l, instance_get_rnumanc(0), rangeTime);
+            	for(int i=0;i<4;i++)
+            		anctoancranges[i]=instance_get_idist_mm(i);
             }
 #endif
             //led_off(LED_PC9);
