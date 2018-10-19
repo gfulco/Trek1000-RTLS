@@ -1603,7 +1603,6 @@ int anch_app_run(instance_data_t *inst)
             				inst->msg_f.messageData[VRESP] =  0;
                         	inst->msg_f.messageData[FCODE] = RTLS_DEMO_MSG_ANCH_ASYNC; //message function code (specifies if message is a poll, response or other...)
                             inst->psduLength = (ANCH_FINAL_MSG_LEN + FRAME_CRTL_AND_ADDRESS_S + FRAME_CRC);
-                            inst->msg_f.seqNum = inst->frameSN++;
                             inst->msg_f.messageData[PTXT] = (uint8)anctoancranges[0];
 							inst->msg_f.messageData[RRXT0] = (uint8)anctoancranges[1];
 							inst->msg_f.messageData[RRXT1] = (uint8)anctoancranges[2];
@@ -1616,6 +1615,7 @@ int anch_app_run(instance_data_t *inst)
 
             				instDone = INST_DONE_WAIT_FOR_NEXT_EVENT; //will use RX FWTO to time out (set above)
             }
+            break;
             default:
             break;
     } // end switch on testAppState

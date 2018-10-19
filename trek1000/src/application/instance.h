@@ -77,7 +77,7 @@ extern "C" {
 #define RTLS_DEMO_MSG_ANCH_RESP2            (0x7B)          // Anchor response to poll from anchor
 #define RTLS_DEMO_MSG_ANCH_FINAL            (0x7C)          // Anchor final massage back to Anchor
 #define RTLS_DEMO_MSG_TAG_FINAL             (0x82)          // Tag final massage back to Anchor
-
+#define RTLS_DEMO_MSG_ANCH_ASYNC			(0x83)			// async message FCODE
 
 //lengths including the Decaranging Message Function Code byte
 //absolute length = 17 +

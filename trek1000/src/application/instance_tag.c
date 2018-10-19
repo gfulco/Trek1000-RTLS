@@ -596,7 +596,7 @@ int tag_app_run(instance_data_t *inst)
                 }
 
 				inst->previousState = TA_TXFINAL_WAIT_SEND;
-				inst->instToSleep = TRUE ;
+
             	instDone = INST_DONE_WAIT_FOR_NEXT_EVENT; //will use RX FWTO to time out (set above)
             }
             break;
@@ -614,10 +614,16 @@ int tag_app_run(instance_data_t *inst)
 
                 instDone = INST_NOT_DONE_YET;
 
-                if(inst->previousState == TA_TXFINAL_WAIT_SEND)
+                if(inst->previousState == TA_RX_WAIT_DATA)
                 {
                    	inst->testAppState = TA_TXE_WAIT ;
                    	inst->nextState = TA_TXPOLL_WAIT_SEND ;
+                    break;
+                }
+
+                if(inst->previousState == TA_TXFINAL_WAIT_SEND)
+                {
+                   	inst->testAppState = TA_TXE_WAIT ;
                     break;
                 }
                 else
@@ -743,6 +749,26 @@ int tag_app_run(instance_data_t *inst)
 						}
 						break; //RTLS_DEMO_MSG_ANCH_RESP
 
+						case RTLS_DEMO_MSG_ANCH_ASYNC:
+						{
+
+                            anctoancranges[0] = (int)inst->msg_f.messageData[PTXT];
+							anctoancranges[1] = (int)inst->msg_f.messageData[RRXT0];
+							anctoancranges[2]= (int)inst->msg_f.messageData[RRXT1];
+							anctoancranges[3]= (int)inst->msg_f.messageData[RRXT2];
+							instance_set_antennadelays(); //this will update the antenna delay if it has changed
+							instance_set_txpower(); // configure TX power if it has changed
+
+							if(dw_event->typePend != DWT_SIG_RX_PENDING)
+							{
+								inst->testAppState = TA_RXE_WAIT ;              // wait for next frame
+							}
+							else
+								inst->previousState = TA_RXWAIT_DATA;
+								inst->instToSleep = TRUE ;
+								inst->testAppState = TA_TX_WAIT_CONF;
+						}
+						break;
 						default:
 						{
 							tag_process_rx_timeout(inst); //if unknown message process as timeout
