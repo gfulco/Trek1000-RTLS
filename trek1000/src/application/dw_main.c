@@ -623,6 +623,9 @@ int dw_main(void)
 					sprintf((char*)&dataseq1[0], "A%d T%d: %3.2f m", ancaddr, toggle, rangetotag);
 					writetoLCD( 16, 1, dataseq1); //send some data
 
+					sprintf((char*)&dataseq1[0], "01:%d 12:%d 02:%d 03:%d", anctoancrange[0], anctoancrange[1], anctoancrange[2],anctoancrange[3]);
+										writetoLCD( 16, 1, dataseq1);
+
 					toggle++;
 
 					if(toggle >= MAX_TAG_LIST_SIZE)
